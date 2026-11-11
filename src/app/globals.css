@@ -1,0 +1,118 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+@theme inline {
+  --color-ink: #0a0610;
+  --color-night: #120a1c;
+  --color-pink: #ff2e88;
+  --color-sunset: #ff7a1a;
+  --color-gold: #ffc93c;
+  --color-teal: #19e3cf;
+  --color-violet: #8b3dff;
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-anton);
+  --font-mono: var(--font-mono-jb);
+}
+
+html { background: #0a0610; }
+body { background: #0a0610; color: #f3ecf7; overflow-x: hidden; }
+::selection { background: #ff2e88; color: #fff; }
+
+/* ---------- Tipografia ---------- */
+.font-display { font-family: var(--font-anton), Impact, sans-serif; letter-spacing: .01em; text-transform: uppercase; line-height: .9; }
+.label { font-family: var(--font-mono-jb), monospace; font-size: 11px; letter-spacing: .28em; text-transform: uppercase; }
+.text-sunset {
+  background: linear-gradient(180deg, #ffe06b 0%, #ff8a1f 45%, #ff2e88 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.text-vice {
+  background: linear-gradient(90deg, #19e3cf, #8b3dff 45%, #ff2e88 80%, #ff7a1a);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.text-sunset, .text-vice { text-shadow: none; padding-top: .28em; margin-top: -.28em; }
+.title-shadow .text-sunset, .title-shadow .text-vice { filter: drop-shadow(4px 4px 0 #000); }
+.text-outline { color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,.9); }
+.text-outline-pink { color: transparent; -webkit-text-stroke: 2px #ff2e88; }
+.title-shadow { text-shadow: 4px 4px 0 #000, 0 0 40px rgba(255,46,136,.35); }
+.poster-shadow { filter: drop-shadow(5px 5px 0 #000); }
+
+/* ---------- Texturas: grão + scanlines ---------- */
+.grain::after {
+  content: ""; position: fixed; inset: -50%; z-index: 90; pointer-events: none; opacity: .09;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1.2s steps(6) infinite;
+}
+@keyframes grain {
+  0%,100% { transform: translate(0,0) } 20% { transform: translate(-3%,2%) } 40% { transform: translate(2%,-3%) }
+  60% { transform: translate(-2%,-1%) } 80% { transform: translate(3%,3%) }
+}
+.scanlines { background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px); pointer-events: none; }
+.halftone {
+  background-image: radial-gradient(rgba(0,0,0,.55) 1px, transparent 1.4px);
+  background-size: 6px 6px; pointer-events: none;
+}
+.vignette { background: radial-gradient(ellipse at center, transparent 45%, rgba(10,6,16,.85) 100%); pointer-events: none; }
+
+/* ---------- Marquee ---------- */
+.marquee { display: flex; width: max-content; animation: marquee var(--speed, 28s) linear infinite; }
+.marquee-rev { animation-direction: reverse; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---------- HUD ---------- */
+.hud-panel {
+  background: linear-gradient(180deg, rgba(18,10,28,.82), rgba(10,6,16,.92));
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(14px);
+}
+.corner { position: relative; }
+.corner::before, .corner::after {
+  content: ""; position: absolute; width: 18px; height: 18px; border-color: #ff2e88; pointer-events: none;
+}
+.corner::before { top: -1px; left: -1px; border-top: 2px solid; border-left: 2px solid; }
+.corner::after { bottom: -1px; right: -1px; border-bottom: 2px solid; border-right: 2px solid; }
+
+.clip-slant { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 4vw), 0 100%); }
+.clip-slant-top { clip-path: polygon(0 4vw, 100% 0, 100% 100%, 0 100%); }
+.btn-skew { transform: skewX(-8deg); }
+.btn-skew > * { transform: skewX(8deg); }
+
+@keyframes radar { to { transform: rotate(360deg); } }
+.radar-sweep { background: conic-gradient(from 0deg, rgba(25,227,207,.45), transparent 25%); animation: radar 3.2s linear infinite; }
+@keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: .2 } }
+.blink { animation: blink 1.2s steps(2) infinite; }
+@keyframes siren { 0%,49% { background: #ff2e4d } 50%,100% { background: #2e6bff } }
+.siren { animation: siren .6s infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grain::after, .marquee, .radar-sweep, .blink, .siren { animation: none !important; }
+}
+
+html[data-intro="seen"] .intro-loader { display: none !important; }
+
+/* Brilho que varre o botão principal */
+.shine { position: relative; overflow: hidden; }
+.shine::after {
+  content: ""; position: absolute; inset: -20% auto -20% -60%; width: 40%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.75), transparent);
+  transform: skewX(-20deg); transition: none; pointer-events: none;
+}
+.shine:hover::after { left: 130%; transition: left .7s ease; }
+
+/* Raios de luz do sol no hero */
+@keyframes rays { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.sun-rays {
+  transform: translate(-50%, -50%);
+  background: repeating-conic-gradient(from 0deg, rgba(255,214,120,.22) 0deg 4deg, transparent 4deg 14deg);
+  mask-image: radial-gradient(circle, black 0%, transparent 65%);
+  animation: rays 90s linear infinite;
+}
+@keyframes sunpulse { 0%,100% { opacity: .75; transform: translate(-50%,-50%) scale(1) } 50% { opacity: 1; transform: translate(-50%,-50%) scale(1.08) } }
+.sun-glow { transform: translate(-50%,-50%); animation: sunpulse 6s ease-in-out infinite; }
+@keyframes kenburns { from { transform: scale(1.06) translate(0,0) } to { transform: scale(1.16) translate(-1.5%, -1%) } }
+.kenburns { animation: kenburns 24s ease-in-out infinite alternate; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sun-rays, .sun-glow, .kenburns { animation: none !important; }
+  .shine:hover::after { transition: none; }
+}
+@media (pointer: fine) { .has-cursor a, .has-cursor button { cursor: pointer; } }
